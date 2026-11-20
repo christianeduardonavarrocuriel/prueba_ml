@@ -1,0 +1,112 @@
+$def with (encabezados=None, datos=None, informe=None, error=None)
+$def render_tabla(encabezados, filas)
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+            $for encabezado in encabezados:
+                <th style="border: 1px solid #000; padding: 6px;">$encabezado</th>
+            </tr>
+        </thead>
+        <tbody>
+        $for fila in filas:
+            <tr>
+            $for celda in fila:
+                <td style="border: 1px solid #000; padding: 6px;">$celda</td>
+            </tr>
+        </tbody>
+    </table>
+
+<a href="/" style="display: inline-block; margin-bottom: 12px;">&larr; Atr&aacute;s</a>
+
+$if error:
+    <p style="color: #b00020;"><strong>Error:</strong> $error</p>
+$elif informe is not None:
+    <h1>ML Tools</h1>
+
+    <h2>Estad&iacute;stica descriptiva</h2>
+    <ul>
+        <li><strong>Cantidad de filas:</strong> $informe["filas"]</li>
+        <li><strong>Cantidad de columnas:</strong> $informe["columnas"]</li>
+    </ul>
+
+    <h3>Tipos de datos</h3>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px;">Columna</th>
+                <th style="border: 1px solid #000; padding: 6px;">Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+        $for columna, tipo in informe["tipos"]:
+            <tr>
+                <td style="border: 1px solid #000; padding: 6px;">$columna</td>
+                <td style="border: 1px solid #000; padding: 6px;">$tipo</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Valores nulos por columna</h3>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px;">Columna</th>
+                <th style="border: 1px solid #000; padding: 6px;">Nulos</th>
+            </tr>
+        </thead>
+        <tbody>
+        $for columna, nulos in informe["nulos"]:
+            <tr>
+                <td style="border: 1px solid #000; padding: 6px;">$columna</td>
+                <td style="border: 1px solid #000; padding: 6px;">$nulos</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Estad&iacute;stica (columnas num&eacute;ricas)</h3>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px;">Columna</th>
+                <th style="border: 1px solid #000; padding: 6px;">M&aacute;ximo</th>
+                <th style="border: 1px solid #000; padding: 6px;">M&iacute;nimo</th>
+                <th style="border: 1px solid #000; padding: 6px;">Mediana</th>
+                <th style="border: 1px solid #000; padding: 6px;">Media</th>
+                <th style="border: 1px solid #000; padding: 6px;">Desviaci&oacute;n est&aacute;ndar</th>
+            </tr>
+        </thead>
+        <tbody>
+        $for estadistica in informe["estadisticas"]:
+            <tr>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["columna"]</td>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["maximo"]</td>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["minimo"]</td>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["mediana"]</td>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["media"]</td>
+                <td style="border: 1px solid #000; padding: 6px;">$estadistica["desviacion"]</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Moda por columna</h3>
+    <table style="border-collapse: collapse;">
+        <thead>
+            <tr>
+                <th style="border: 1px solid #000; padding: 6px;">Columna</th>
+                <th style="border: 1px solid #000; padding: 6px;">Moda</th>
+            </tr>
+        </thead>
+        <tbody>
+        $for columna, moda in informe["modas"]:
+            <tr>
+                <td style="border: 1px solid #000; padding: 6px;">$columna</td>
+                <td style="border: 1px solid #000; padding: 6px;">$moda</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Primeras 5 filas (df.head(5))</h2>
+    $:render_tabla(informe["encabezados"], informe["primeras_filas"])
+
+    <h2>&Uacute;ltimas 5 filas (df.tail(5))</h2>
+    $:render_tabla(informe["encabezados"], informe["ultimas_filas"])
